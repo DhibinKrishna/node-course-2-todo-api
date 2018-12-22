@@ -51,3 +51,5 @@ app.listen(port, () => {
     console.log('App listening at port', port);
 });
 
+//For testing
+module.exports = {app};
