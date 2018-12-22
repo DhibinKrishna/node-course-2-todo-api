@@ -10,6 +10,7 @@ let port = 3000;
 
 app.use(bodyParser.json()); //Middleware    
 
+//post /todos
 app.post('/todos', (req, res) => {
     //console.log(req.body);
     var todo = new Todo({
@@ -23,6 +24,15 @@ app.post('/todos', (req, res) => {
     }, (err) => {
         res.status(400).send(err);
     });
+});
+
+//get /todos
+app.get('/todos', (req, res) => {
+    Todo.find().then((todos) => {
+        res.send({todos, test: 'hello'}) /*Send objec as it's more flexible, so we can add custom properties*/
+    }, (e) => {
+        res.status(400).send(e);
+    })
 });
 
 // var newTodo = new Todo({
