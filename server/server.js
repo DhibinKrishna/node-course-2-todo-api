@@ -7,7 +7,7 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user')
 
 var app = express();
-let port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json()); //Middleware    
 
@@ -57,7 +57,7 @@ app.get('/todos/:id', (req, res) => {
     });    
 });
 
-//Lecture: 78 - 6:36
+//Lecture: 80 - 0:00
 
 // var newTodo = new Todo({
 //     text: ' Cook ',
