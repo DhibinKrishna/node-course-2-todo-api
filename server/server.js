@@ -57,29 +57,27 @@ app.get('/todos/:id', (req, res) => {
     });    
 });
 
-//Lecture: 80 - 0:00
+app.delete('/todos/:id', (req, res) => {
+    let id = req.params.id;
 
-// var newTodo = new Todo({
-//     text: ' Cook ',
-//     completed: false,
-//     completedAt: null
-// });
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
 
-// newTodo.save().then((doc) => {
-//     console.log('Saved todo', doc);
-// }, e => {
-//     console.log('Unable to save todo', e);
-// });
+    Todo.findByIdAndDelete(id).then((todo) => {
+        if(todo){
+            res.status(200).send({todo, test: 'hello'});
+        }
+        else{
+            res.status(404).send();
+        }
+        
+    }).catch((e) => {
+        res.status(400).send();
+    });      
+});
 
-// var user = new User({
-//     email: 'sample@test.com'
-// });
-
-// user.save().then((doc) => {
-//     console.log('Saved user', doc);
-// }, e => {
-//     console.log('Unable to save user', e);
-// });
+//Lecture: 82 - 0:00
 
 app.listen(port, () => {
     console.log('App listening at port', port);
