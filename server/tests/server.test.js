@@ -13,15 +13,16 @@ const todos = [{
     text: 'Second test todo'
 }];
 
-//called before each test case (it). Hook?
+//Deprecated
 // beforeEach((done) => {
-//     Todo.deleteMany({}, () => {
-//         Todo.insertMany(todos)
-//     }).then(() => done()).then(() => done());
+//     Todo.remove({}).then(() => {
+//         return Todo.insertMany(todos);
+//     }).then(() => done());
 // });
 
+//called before each test case (it). Hook?
 beforeEach((done) => {
-    Todo.remove({}).then(() => {
+    Todo.deleteMany({}).then(() => {
         return Todo.insertMany(todos);
     }).then(() => done());
 });
@@ -101,6 +102,44 @@ describe('GET /todos/:id', () => {
     it('should return 404 for non-object ids', (done) => {
         request(app)
         .get('/todos/1234')
+        .expect(404)
+        .end(done);
+    });
+});
+
+describe('DELETE /todos/:id', () => {
+    it('should remove a todo', (done) => {
+        let hexId = todos[1]._id.toHexString();
+
+        request(app)
+        .delete(`/todos/${hexId}`)
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todo._id).toBe(hexId);
+        })
+        .end((err, res) => {
+            if(err) {
+                return done(err);
+            }
+
+            Todo.findById(hexId).then((todo) => {
+                 expect(todo).toNotExist();
+                 done();
+            }).catch((e) => done(e));
+        })
+    });
+
+    it('should return 404 if todo not found', (done) => {
+        let _id1 = new ObjectID();
+        request(app)
+        .delete(`/todos/${_id1.toHexString()}`)
+        .expect(404)
+        .end(done);
+    });
+
+    it('should return 404 if object id is invalid', (done) => {
+        request(app)
+        .delete('/todos/1234')
         .expect(404)
         .end(done);
     });
