@@ -14,9 +14,24 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json()); //Middleware    
 
-//post /todos
+//POST /users
+app.post('/users', (req, res) => {
+    let body = _.pick(req.body, ['email', 'password']);
+    let user = new User(body);
+
+    user.save().then(() => {
+        return user.generateAuthToken();
+        //res.send(user);
+    }).then((token) => {
+        res.header('x-auth', token).send(user); //header names beginning with 'x-' are custom headers
+    }).catch((e) => {
+        console.log('2');
+        res.status(400).send(e);
+    });
+});
+
+//POST /todos
 app.post('/todos', (req, res) => {
-    //console.log(req.body);
     var todo = new Todo({
         text: req.body.text,
         completed: req.body.completed,
@@ -30,7 +45,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
-//get /todos
+//GET /todos
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos, test: 'hello'}) /*Send objec as it's more flexible, so we can add custom properties*/
@@ -80,7 +95,7 @@ app.delete('/todos/:id', (req, res) => {
     });      
 });
 
-
+//PATCH /todos/:id
 app.patch('/todos/:id', (req, res) => {
     let id = req.params.id;
     let body = _.pick(req.body, ['text', 'completed']);
@@ -107,7 +122,7 @@ app.patch('/todos/:id', (req, res) => {
     });
 });
 
-//Lecture: 82 - 0:00
+
 
 app.listen(port, () => {
     console.log('App listening at port', port);
