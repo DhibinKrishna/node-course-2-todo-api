@@ -7,12 +7,31 @@ const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
-var {User} = require('./models/user')
+var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json()); //Middleware    
+
+app.get('/users/me', authenticate, (req, res) => { //Middleware authenticate is used
+    res.send(req.user);
+});
+
+// app.get('/users/me', (req, res) => {
+//     let token = req.header('x-auth');
+
+//     User.findByToken(token).then((user) => {
+//         if (!user) {
+//             return Promise.reject(); //so it will be caught in the catch()
+//         }
+
+//         
+//     }).catch((e) => {
+//         res.status(401).send(); //Unauthorized
+//     });
+// });
 
 //POST /users
 app.post('/users', (req, res) => {
