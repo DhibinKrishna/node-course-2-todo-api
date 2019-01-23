@@ -58,6 +58,17 @@ UserSchema.methods.generateAuthToken = function () { //Not arrow fn, as we need 
     });
 };
 
+UserSchema.methods.removeToken = function(token) {
+    let user = this;
+
+    //$pull mongodb operator to remove items from an array
+    return user.update({
+        $pull: {
+            tokens: {token} //it will match 'tokens' array with any item {token: token}
+        }
+    });
+};
+
 //Model method
 UserSchema.statics.findByToken = function (token) {
     let User = this; //Model
