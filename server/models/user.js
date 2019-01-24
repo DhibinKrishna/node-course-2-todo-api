@@ -62,7 +62,7 @@ UserSchema.methods.removeToken = function(token) {
     let user = this;
 
     //$pull mongodb operator to remove items from an array
-    return user.update({
+    return user.updateOne({
         $pull: {
             tokens: {token} //it will match 'tokens' array with any item {token: token}
         }
